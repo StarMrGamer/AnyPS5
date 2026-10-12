@@ -494,7 +494,7 @@ void RetireDepthSurfaces(VkDevice device, std::uint64_t address, std::uint64_t b
     }
 }
 
-bool RetireDepthSurfacesForStorage(VkDevice device, const GuestTextureResource& descriptor, VkFormat storageFormat, std::uint64_t bytes) {
+bool RetireDepthSurfacesForStorage(VkDevice device, const GuestTextureResource& descriptor, VkFormat storageFormat, std::uint64_t bytes, bool written) {
     std::lock_guard lock(surfacesMutex());
     const auto& list = surfaces();
     const auto found = std::find_if(list.rbegin(), list.rend(), [&](const auto& surface) { return surface->context.device == device && !surface->retired && surface->target.address == descriptor.baseAddress; });

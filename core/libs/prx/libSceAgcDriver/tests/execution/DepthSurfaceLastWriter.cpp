@@ -189,14 +189,14 @@ void Run(const Context& context) {
     Require(Refused(context, mips), "depth, color target, depth again, then a view with two levels: the live depth surface did not refuse it");
 
     const VkExtent2D otherExtent{Extent.width + 16, Extent.height};
-    Require(!RetireDepthSurfacesForStorage(context.device, exact, VK_FORMAT_R32_SFLOAT, depthBytes), "a written storage image the depth plane can seed retired the depth surface");
+    Require(!RetireDepthSurfacesForStorage(context.device, exact, VK_FORMAT_R32_SFLOAT, depthBytes, true), "a written storage image the depth plane can seed retired the depth surface");
     Require(DepthSurfaceAt(DepthAddress), "a written storage image the depth plane can seed left no live depth surface");
-    Require(!RetireDepthSurfacesForStorage(context.device, View(Extent.width, Extent.height, DepthAddress + 0x100), VK_FORMAT_B10G11R11_UFLOAT_PACK32, 0x1000), "a written storage image inside the depth plane but not at its address went through the storage rule");
-    Require(RetireDepthSurfacesForStorage(context.device, exact, VK_FORMAT_B10G11R11_UFLOAT_PACK32, depthBytes), "depth, then a written storage image of another format at its address: the depth surface was not retired");
+    Require(!RetireDepthSurfacesForStorage(context.device, View(Extent.width, Extent.height, DepthAddress + 0x100), VK_FORMAT_B10G11R11_UFLOAT_PACK32, 0x1000, true), "a written storage image inside the depth plane but not at its address went through the storage rule");
+    Require(RetireDepthSurfacesForStorage(context.device, exact, VK_FORMAT_B10G11R11_UFLOAT_PACK32, depthBytes, true), "depth, then a written storage image of another format at its address: the depth surface was not retired");
     Require(!DepthSurfaceAt(DepthAddress), "depth, then a written storage image of another format at its address: the depth surface stayed live");
     Require(Sample(context, exact) == nullptr, "depth, then a written storage image of another format, then its own view: the retired depth surface served it");
     DepthSurfaceView(context, Depth());
-    Require(RetireDepthSurfacesForStorage(context.device, View(otherExtent.width, otherExtent.height), VK_FORMAT_R32_SFLOAT, DepthSliceBytes(otherExtent, 4)), "depth, then a written storage image of another extent at its address: the depth surface was not retired");
+    Require(RetireDepthSurfacesForStorage(context.device, View(otherExtent.width, otherExtent.height), VK_FORMAT_R32_SFLOAT, DepthSliceBytes(otherExtent, 4), true), "depth, then a written storage image of another extent at its address: the depth surface was not retired");
     Require(!DepthSurfaceAt(DepthAddress), "depth, then a written storage image of another extent at its address: the depth surface stayed live");
     DepthSurfaceView(context, Depth());
     Require(DepthSurfaceAt(DepthAddress), "binding the depth target after a storage writer did not bring the depth surface back");
