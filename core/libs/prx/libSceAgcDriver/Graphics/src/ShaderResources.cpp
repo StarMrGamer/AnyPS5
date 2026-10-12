@@ -807,7 +807,6 @@ std::shared_ptr<StorageTexture> cachedStorageTexture(const Context& context, std
     auto texture = lookupStorageTexture(context, words, viewed, mip, guestBytes);
     if (!DepthSurfaceAt(viewed.baseAddress)) return texture;
     if (written && RetireDepthSurfacesForStorage(context.device, texture->Descriptor(), texture->StorageFormat(), texture->GuestBytes(), written)) return texture;
-    if (written) return texture;
     SeedStorageFromDepth(context, texture);
     return texture;
 }
